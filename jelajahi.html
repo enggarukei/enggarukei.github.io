@@ -8,6 +8,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+        <div id="content"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js">   </script>
+<script>
+    function loadMarkdown(file) {
+        fetch(file)
+            .then(response => response.text())
+            .then(markdown => {
+                let converter = new showdown.Converter();
+                let html = converter.makeHtml(markdown);
+                document.getElementById("content").innerHTML = html;
+            })
+            .catch(error => console.error('Error loading Markdown:', error));
+    }
+
+    // Cek apakah URL memiliki parameter "?md=..."
+    function loadMarkdownFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const mdFile = urlParams.get('md');
+        if (mdFile) {
+            loadMarkdown(mdFile);
+        }
+    }
+
+    window.onload = loadMarkdownFromURL;
+</script>
     <div class="container">
         <header>
             <h1>📖 Daftar Tulisan</h1>
@@ -29,7 +55,7 @@
 <div class="category">
     <h2>🌐 Networking</h2>
     <ul>
-        <li><a href="/networking/mikrotik-vlan.md">Perbedaan Prerouting vs Forward MikroTik</a></li>
+        <li><a href="viewer.html?=/networking/mikrotik-vlan.md">Perbedaan Prerouting vs Forward MikroTik</a></li>
     </ul>
 </div>
 
