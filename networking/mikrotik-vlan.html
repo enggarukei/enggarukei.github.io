@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidup dalam Sunyi</title>
+    <link rel="stylesheet" href="../styles.css">
+    <body>
+    <div class="container">
+        <header>
+        	MikroTik Prerouting vs Forward.
+        	    <section class="content">
+
+<h3 id="-perbedaan-prerouting-dan-forward-di-mangle-mikrotik-"><strong>📌 Perbedaan Prerouting dan Forward di Mangle MikroTik</strong></h3>
+<p>Ketika kita bekerja dengan <strong>Mangle di Firewall MikroTik</strong>, kita sering menggunakan <strong>prerouting</strong> atau <strong>forward</strong> untuk menandai paket. Namun, ada perbedaan penting dalam cara keduanya bekerja.</p>
+<hr>
+<h2 id="-1-prerouting-vs-forward-perbedaan-utama-"><strong>1️⃣ Prerouting vs Forward: Perbedaan Utama</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Chain</th>
+<th>Kapan Digunakan?</th>
+<th>Fungsi Utama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prerouting</strong></td>
+<td>Saat paket pertama kali masuk ke router</td>
+<td>Digunakan untuk menandai paket sebelum diproses oleh routing</td>
+</tr>
+<tr>
+<td><strong>Forward</strong></td>
+<td>Saat paket diteruskan dari satu interface ke interface lain</td>
+<td>Digunakan untuk menandai paket yang melewati router (bukan untuk router itu sendiri)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-2-bagaimana-cara-kerjanya-"><strong>2️⃣ Bagaimana Cara Kerjanya?</strong></h2>
+<p>📍 <strong>Prerouting:</strong></p>
+<ul>
+<li><strong>Menandai paket lebih awal</strong>, sebelum MikroTik memutuskan apakah paket akan dikirim ke router atau diteruskan ke jaringan lain.</li>
+<li>Berguna jika kita ingin <strong>menandai semua traffic lebih awal</strong>, termasuk traffic yang akan diteruskan atau yang ditujukan ke router.</li>
+</ul>
+<p>📍 <strong>Forward:</strong></p>
+<ul>
+<li>Hanya berlaku untuk <strong>paket yang melewati router</strong>, bukan untuk paket yang berasal dari atau ditujukan ke router itu sendiri.</li>
+<li>Jika paket hanya menuju ke router (misalnya untuk management atau DNS resolver di MikroTik), maka <strong>tidak akan masuk ke chain forward</strong>.</li>
+</ul>
+<hr>
+<h2 id="-3-kapan-harus-menggunakan-prerouting-atau-forward-"><strong>3️⃣ Kapan Harus Menggunakan Prerouting atau Forward?</strong></h2>
+<p>🔹 <strong>Gunakan <code>prerouting</code> jika:</strong></p>
+<ul>
+<li>Anda ingin <strong>menandai paket lebih awal</strong> sebelum routing.</li>
+<li>Anda ingin menangkap semua traffic dari VLAN tertentu (misalnya VLAN Dosen).</li>
+</ul>
+<p>🔹 <strong>Gunakan <code>forward</code> jika:</strong></p>
+<ul>
+<li>Anda hanya ingin <strong>menandai paket yang diteruskan antar interface</strong>.</li>
+<li>Paket harus <strong>melewati router</strong> (misalnya dari LAN ke internet atau antar VLAN).</li>
+</ul>
+<h3 id="-contoh-kasus-limitasi-bandwidth-vlan-dosen-"><strong>Contoh Kasus: Limitasi Bandwidth VLAN Dosen</strong></h3>
+<p>Jika kita ingin membatasi <strong>bandwidth untuk setiap perangkat di VLAN Dosen</strong>, kita harus memilih chain yang tepat:</p>
+<p>1️⃣ <strong>Jika menggunakan Simple Queue</strong> (Target Address List) → <strong>Gunakan <code>prerouting</code></strong> karena paket perlu ditandai sebelum diteruskan.<br>2️⃣ <strong>Jika menggunakan Queue Tree</strong> (Parent: global) → <strong>Gunakan <code>forward</code></strong> karena paket yang dilewatkan ke queue hanya yang diteruskan oleh router.</p>
+<hr>
+<h2 id="-contoh-konfigurasi-mangle-untuk-queue-tree-"><strong>🛠 Contoh Konfigurasi Mangle untuk Queue Tree</strong></h2>
+<p>Jika Anda ingin membatasi bandwidth <strong>hanya untuk perangkat yang melewati router (bukan perangkat di router)</strong>, gunakan <code>forward</code>:</p>
+<p>1️⃣ <strong>Menandai Koneksi</strong></p>
+<pre><code class="lang-sh">/ip firewall mangle
+add chain=forward src-address=<span class="hljs-number">192.168</span><span class="hljs-number">.20</span><span class="hljs-number">.0</span>/<span class="hljs-number">24</span> action=mark-connection new-connection-mark=VLAN-Dosen-Conn
+</code></pre>
+<p>2️⃣ <strong>Menandai Paket Berdasarkan Koneksi</strong></p>
+<pre><code class="lang-sh">/ip firewall mangle
+<span class="hljs-built_in">add</span> chain=forward connection-<span class="hljs-keyword">mark</span>=VLAN-Dosen-Conn action=<span class="hljs-keyword">mark</span>-packet <span class="hljs-keyword">new</span>-packet-<span class="hljs-keyword">mark</span>=VLAN-Dosen-Pkt
+</code></pre>
+<p>3️⃣ <strong>Membuat Queue Tree</strong></p>
+<pre><code class="lang-sh">/<span class="hljs-built_in">queue</span> tree
+add name=VLAN<span class="hljs-params">-Dosen</span> <span class="hljs-keyword">parent</span>=<span class="hljs-built_in">global</span> packet<span class="hljs-params">-mark</span>=VLAN<span class="hljs-params">-Dosen</span><span class="hljs-params">-Pkt</span> <span class="hljs-keyword">max</span><span class="hljs-params">-limit</span>=<span class="hljs-number">15</span>M
+</code></pre>
+<p>📝 <strong>Kenapa pakai forward?</strong><br>Karena kita hanya ingin membatasi paket <strong>yang diteruskan antar interface</strong>, bukan yang masuk ke router.</p>
+<hr>
+<h2 id="-kesimpulan-"><strong>📌 Kesimpulan</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Chain</th>
+<th>Gunakan Jika...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prerouting</strong></td>
+<td>Paket perlu ditandai <strong>sebelum routing diproses</strong> (misal untuk Simple Queue dengan Address List).</td>
+</tr>
+<tr>
+<td><strong>Forward</strong></td>
+<td>Paket perlu ditandai <strong>saat diteruskan antar interface</strong> (misal untuk Queue Tree).</td>
+</tr>
+</tbody>
+</table>
+<p>✅ <strong>Kalau pakai Simple Queue → Gunakan <code>prerouting</code></strong><br>✅ <strong>Kalau pakai Queue Tree → Gunakan <code>forward</code></strong></p>
+<hr>
+<p>Semoga penjelasan ini membantu! Jika ada yang kurang jelas, jangan ragu untuk bertanya! 🚀😊</p>
+
+        	    	     </section>
+
+        <footer>
+            <p>© 2025 Introvert's Blog</p>
+        </footer>
+    </div>
+</body>
+</html>
