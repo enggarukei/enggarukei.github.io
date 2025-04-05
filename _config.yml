@@ -1,0 +1,7 @@
+title: EnggarUkei's Book Reviews
+description: Kumpulan ulasan buku yang pernah saya baca
+author: Enggar Ukei
+theme: minima
+markdown: kramdown
+plugins:
+  - jekyll-feed
