@@ -1,5 +1,5 @@
 title: Enggarukei's Book Reviews
-description: Kumpulan ulasan buku yang pernah saya baca
+description: Catatan, renungan, dan kutipan dari buku-buku yang pernah saya baca.
 author: Enggarukei
 theme: minima
 markdown: kramdown
@@ -14,9 +14,11 @@ minima:
       url: "/tentang"
     - title: "Kutipan"
       url: "/kutipan"
+    - title: "Kategori"
+      url: "/kategori"
 
 sass:
   style: compressed
 
-# include:
-#  - _includes/head-custom.html
+include:
+  - _includes/head-custom.html

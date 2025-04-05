@@ -13,6 +13,7 @@ image: /assets/img/man-seach-for-meaning.png
 
 ---
 
+
 **“It’s hard to remember that our lives are such a short time. It’s hard to remember when it takes such a long time.” — Isaac Brock**
 
 I first read Viktor E. Frankel’s Man’s Search for Meaning a few years ago in college. My professor had assigned the book for a seminar and prefaced our study of Frankl’s work by telling us that this book is one to revisit every couple of years. As a 19-year-old, I had found this book impactful. So, I decided to revisit this book as a graduate student.

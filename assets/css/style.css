@@ -27,3 +27,28 @@ body {
     color: #444;
   }
   
+  :root {
+    --bg: #ffffff;
+    --text: #222222;
+    --link: #1a0dab;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1e;
+      --text: #f5f5f5;
+      --link: #4ea1f3;
+    }
+  }
+  
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Merriweather', serif;
+    transition: all 0.3s ease;
+  }
+  
+  a {
+    color: var(--link);
+  }
+  
