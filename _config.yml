@@ -16,9 +16,10 @@ minima:
       url: "/kutipan"
     - title: "Kategori"
       url: "/kategori"
+  social_links:
+      rss: false
+  sass:
+      style: compressed  
+  include:
+    - _includes/head-custom.html
 
-sass:
-  style: compressed
-
-include:
-  - _includes/head-custom.html
