@@ -1,7 +1,22 @@
-title: EnggarUkei's Book Reviews
+title: Enggarukei's Book Reviews
 description: Kumpulan ulasan buku yang pernah saya baca
-author: Enggar Ukei
+author: Enggarukei
 theme: minima
 markdown: kramdown
 plugins:
   - jekyll-feed
+
+minima:
+  navigation:
+    - title: "Beranda"
+      url: "/"
+    - title: "Tentang"
+      url: "/tentang"
+    - title: "Kutipan"
+      url: "/kutipan"
+
+sass:
+  style: compressed
+
+include:
+  - _includes/head-custom.html
