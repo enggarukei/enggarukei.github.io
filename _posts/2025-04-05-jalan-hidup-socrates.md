@@ -3,6 +3,7 @@ layout: post
 title: "Jalan Hidup Socrates"
 date: 2025-04-05
 author: Enggar
+categories: [Filsafat]
 ---
 
 **Judul:** Jalan Hidup Socrates  
